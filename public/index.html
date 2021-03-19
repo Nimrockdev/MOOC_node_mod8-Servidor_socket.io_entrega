@@ -80,7 +80,7 @@
           const mine = msg.from === socket.id;
           if (!mine) {
             const newMessage = $(`<li class="announcement">`)
-              .html(`<b>${msg.user}</b> has just joined the chat. There are ${msg.counter || 0} members.`);
+              .html(`<b>${msg.user}</b> has just joined the chat. There are ${msg.usersConnected || 0} members.`);
             $('#messages').append(newMessage);
           }
           goToBottom();
@@ -91,7 +91,7 @@
           const mine = msg.from === socket.id;
           if (!mine) {
             const newMessage = $(`<li class="announcement">`)
-              .html(`<b>${msg.user}</b> has just left the chat. There are ${msg.counter || 0} members left.`);
+              .html(`<b>${msg.user}</b> has just left the chat. There are ${msg.usersConnected || 0} members left.`);
             $('#messages').append(newMessage);
           }
           goToBottom();

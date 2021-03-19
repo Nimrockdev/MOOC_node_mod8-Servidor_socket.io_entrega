@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 var path = require("path");
 var port = process.env.PORT || 3000;
 
+let usersConnected = 0; 
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -16,16 +17,28 @@ app.get("*", function(req,res,next) {
 io.on('connection', function(socket){
 	const user = socket.handshake.query.name;
 	const from = socket.id;
-	
+	++usersConnected;
+	console.log(`Users connected ${usersConnected}`);
+
 	socket.on('chat_message_sent', function(msg){
 		io.emit('chat_message_received', { ...msg, user, from});
 	});
 
 	socket.on('disconnect', function(msg){
-		io.emit('member_exit', { from, user });
+		--usersConnected;
+		console.log(`Users connected ${usersConnected}`);
+		io.emit('member_exit', { from, user, usersConnected });
+
 	});
 
-	io.emit('new_member', { from, user });
+	io.emit('new_member', { from, user, usersConnected });
+
+	io.emit('confetti_thrown', { from, user });
+
+	socket.on('confetti_thrown', function(msg){
+		io.emit('confetti_received', { from, user });
+	});
+
 });
 
 http.listen(port, function(){
